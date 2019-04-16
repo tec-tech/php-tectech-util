@@ -1,0 +1,13 @@
+{
+    "name": "tectech/util",
+    "type": "library",
+    "authors": [
+        {
+            "name": "yoshihiro",
+            "email": "yoshi@tectech.jp"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0"
+    }
+}
