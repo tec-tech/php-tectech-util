@@ -4,6 +4,9 @@ class Util{
 	//SQL文文字列用
 	//第1引数にシングルコーテーションをつけてリターン
 	//===========================================
+	public static function test(){
+		echo "test";
+	}
 	public static function SqlStr($str, $nullStr=null){
 		if(isset($str) && is_string($str)){
 			$str = preg_replace('/[\t]/', '    ', $str);	//タブをスペース4個に
