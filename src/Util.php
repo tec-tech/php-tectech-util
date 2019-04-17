@@ -7,7 +7,7 @@ class Util{
 	public static function SqlStr($str, $nullStr=null){
 		if(isset($str) && is_string($str)){
 			$str = preg_replace('/[\t]/', '    ', $str);	//タブをスペース4個に
-			$str = addslashes(self::getTrim($str));
+			$str = addslashes(self::Trim($str));
 		}else{
 			$str = '';
 		}
@@ -62,11 +62,24 @@ class Util{
 	//==================================================
 	// 全角スペースと半角スペースのtrim
 	//==================================================
-	public static function getTrim($str){
+	public static function Trim($str){
 		if(isset($str) && is_string($str)){
 			$str = trim($str);
 			return preg_replace('/^[ 　]*(.*?)[ 　]*$/u', '$1', $str);
 		}
+	}
+	//==================================================
+	// 配列のtrim
+	//==================================================
+	public static function ArrTrim($val){
+		if(is_array($val)){
+			foreach($val as &$val2){
+				$val2 = self::ArrTrim($val2);
+			}
+		}else{
+			$val = self::Trim($val);
+		}
+		return $val;
 	}
 
 	
@@ -84,5 +97,5 @@ class Util{
 			array_map('rmdir',  array_filter($paths, 'is_dir'));
 		}
 	}
-	
+
 }
