@@ -97,5 +97,16 @@ class Util{
 			array_map('rmdir',  array_filter($paths, 'is_dir'));
 		}
 	}
+	
+	//==================================================
+	// NULLまたは空文字チェック
+	//==================================================
+	public static function IsNullOrEmpty(&$val){
+		if(!isset($val)) return true;
+		if($val == "") return true;
+		if($val == null) return true;
+		if($val === false) return true;
+		return false;
+	}
 
 }
