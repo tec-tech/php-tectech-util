@@ -1,36 +1,45 @@
 <?php
 class LOG{
-	public static $logDir = __DIR__.'/../../storage/log';
-	public static $log_file_save_day = "7";
+	public static $logDir = null;
+	public static $log_file_save_day = -1;
 
 	//=========================
 	// DEBUG
 	//=========================
-	public static function DEBUG($mess, $depth=0){
-		self::DelOldFile(self::$logDir, self::$log_file_save_day);
-		self::write(self::format("[DEBUG]", $mess, $depth));
+	public static function DEBUG(...$args){
+		foreach((array) $args as $arg){
+			$val = $info = print_r($arg, TRUE);
+			self::write(self::format("[DEBUG]", $val));
+		}
 	}
 
 	//=========================
 	// INFO
 	//=========================
-	public static function INFO($mess, $depth=0){
-		self::DelOldFile(self::$logDir, self::$log_file_save_day);
-		self::write(self::format("[INFO]", $mess, $depth));
+	public static function INFO(...$args){
+		foreach((array) $args as $arg){
+			$val = $info = print_r($arg, TRUE);
+			self::write(self::format("[INFO]", $val));
+		}
 	}
 
 	//=========================
 	// ERROR
 	//=========================
-	public static function ERROR($mess, $depth=0){
-		self::DelOldFile(self::$logDir, self::$log_file_save_day);
-		self::write(self::format("[ERROR]", $mess, $depth));
+	public static function ERROR(...$args){
+		foreach((array) $args as $arg){
+			$val = $info = print_r($arg, TRUE);
+			self::write(self::format("[ERROR]", $val), true);
+		}
 	}
 
 	//=========================
 	// ログファイル書き込み
 	//=========================
-	private static function write($mess, $error=null){
+	private static function write($mess, $error=false){
+		if(self::$logDir === null) return;
+		self::DelOldFile(self::$logDir, self::$log_file_save_day);
+		
 		$LOG_DIR = self::$logDir;
 		if($LOG_DIR != '' && is_dir($LOG_DIR) == false){
 			echo "ログファイル書き込みディレクトリ（".$LOG_DIR."）が正しくありません。<br />";
@@ -38,10 +47,6 @@ class LOG{
 		}else if(is_writable($LOG_DIR) == false){
 			echo "ログファイル書き込みディレクトリ（".$LOG_DIR."）が書き込めません。<br />";
 			exit;
-		}
-		
-		if(isset(self::$log_file_save_day)){
-			self::DelOldFile(self::$logDir, self::$log_file_save_day);
 		}
 		
 		$log_time = date("[y/m/d H:i:s "). getenv("REMOTE_ADDR") . "]";

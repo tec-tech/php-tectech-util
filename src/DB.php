@@ -12,7 +12,7 @@ class DB{
 	// password
 	//======================================
 	public static function setConnectionInfo($connInfo){
-		// LOG::DEBUG('DB 接続情報設定', 2);
+		// LOG::DEBUG('DB 接続情報設定');
 		self::$connInfo = $connInfo;
 	}
 	
@@ -21,7 +21,7 @@ class DB{
 	//======================================
 	public static  function connect(){
 		try{
-			// LOG::INFO("DB接続開始 DataBase Name:[".self::$connInfo["dbname"]."]", 2);
+			// LOG::INFO("DB接続開始 DataBase Name:[".self::$connInfo["dbname"]."]");
 			$dsn = 'mysql:host='.self::$connInfo["host"].';dbname='.self::$connInfo["dbname"].';port='.self::$connInfo["port"].';charset=utf8;';
 			self::$_con = new PDO($dsn, self::$connInfo["user"], self::$connInfo["password"], 
 				array(
@@ -30,10 +30,10 @@ class DB{
 				));
 			
 		}catch (PDOException $e){
-			LOG::ERROR("DB 接続失敗：\n".$e->getMessage()."\nSQL:".$sql, 2);
+			LOG::ERROR("DB 接続失敗：\n".$e->getMessage()."\nSQL:".$sql);
 			throw new Exception($e->getMessage());
 		}
-		// LOG::DEBUG("DB接続成功", 2);
+		// LOG::DEBUG("DB接続成功");
 	}
 	
 	
@@ -42,12 +42,12 @@ class DB{
 	//======================================
 	public static function exec($sql){
 		try{
-			LOG::INFO("SQL実行：".$sql, 2);
+			LOG::INFO("SQL実行：".$sql);
 			$stmt = self::$_con->exec($sql);
 			// LOG::INFO("作用した行数：".$stmt."行");
 			return $stmt;
 		}catch (PDOException $e){
-			LOG::ERROR("SQL実行失敗：\n".$e->getMessage()."\nSQL:".$sql, 2);
+			LOG::ERROR("SQL実行失敗：\n".$e->getMessage()."\nSQL:".$sql);
 			throw new Exception($e->getMessage());
 		}
 	}
@@ -58,10 +58,10 @@ class DB{
 	//======================================
 	public static function getRec($sql){
 		try{
-			LOG::INFO("データ取得：".$sql, 2);
+			LOG::INFO("データ取得：".$sql);
 			$result = self::$_con->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 			self::$_rows = count($result);
-			// LOG::INFO("取得行数：".self::$_rows, 2);
+			// LOG::INFO("取得行数：".self::$_rows);
 			if(self::$_rows < 1) return null;
 			return $result;
 			
@@ -69,7 +69,7 @@ class DB{
 			if(getenv('DERBUG')=='true'){
 				echo "SQLデータ取得失敗：\n".$e->getMessage()."\nSQL:".$sql;
 			}
-			LOG::ERROR("SQLデータ取得失敗：\n".$e->getMessage()."\nSQL:".$sql, 2);
+			LOG::ERROR("SQLデータ取得失敗：\n".$e->getMessage()."\nSQL:".$sql);
 			throw new Exception($e->getMessage());
 		}
 	}
@@ -86,11 +86,11 @@ class DB{
 	//======================================
 	public static function begin(){
 		try{
-			// LOG::INFO("DBトランザクション開始", 2);
+			// LOG::INFO("DBトランザクション開始");
 			return self::$_con->beginTransaction();
 			
 		}catch (PDOException $e){
-			LOG::ERROR("トランザクション開始失敗：".$e->getMessage(), 2);
+			LOG::ERROR("トランザクション開始失敗：".$e->getMessage());
 			throw new Exception($e->getMessage());
 			return null;
 		}
@@ -102,12 +102,12 @@ class DB{
 	//======================================
 	public static function commit(){
 		try{
-			// LOG::INFO("DBコミット", 2);
+			// LOG::INFO("DBコミット");
 			self::$_con->commit();
 			return self::$_con->exec("UNLOCK TABLES");
 			
 		}catch (PDOException $e){
-			LOG::ERROR("DBコミット失敗：".$e->getMessage(), 2);
+			LOG::ERROR("DBコミット失敗：".$e->getMessage());
 			throw new Exception($e->getMessage());
 			return null;
 		}
@@ -119,12 +119,12 @@ class DB{
 	//======================================
 	public static function rollBack(){
 		try{
-			// LOG::INFO("DBロールバック", 2);
+			// LOG::INFO("DBロールバック");
 			self::$_con->rollBack();
 			return self::$_con->exec("UNLOCK TABLES");
 			
 		}catch (PDOException $e){
-			LOG::ERROR("DBロールバック失敗：".$e->getMessage(), 2);
+			LOG::ERROR("DBロールバック失敗：".$e->getMessage());
 			throw new Exception($e->getMessage());
 			return null;
 		}
@@ -143,13 +143,13 @@ class DB{
 	// テーブルロック
 	//======================================
 	public static function LockTables($tables, $lockMode='WRITE'){
-		// LOG::INFO("テーブルロック（".$lockMode."）".$lockMode, 2);
+		// LOG::INFO("テーブルロック（".$lockMode."）".$lockMode);
 		try{
 			$sql = "LOCK TABLE ".$tables." ".$lockMode;
 			$stmt = self::$_con->exec($sql);
 			return $stmt;
 		}catch (PDOException $e){
-			LOG::ERROR("テーブルロック失敗：\n".$e->getMessage()."\nSQL:".$sql, 2);
+			LOG::ERROR("テーブルロック失敗：\n".$e->getMessage()."\nSQL:".$sql);
 			throw new Exception($e->getMessage());
 			return null;
 		}
