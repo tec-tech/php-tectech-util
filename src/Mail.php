@@ -32,7 +32,9 @@ class Mail{
 		$message->setFrom($From)->setTo($To);
 		$message->setBody($Body, $type);
 
-		LOG::INFO("メール送信 ", $To);
+		LOG::$traceDepth = 2;
+		if(is_array($To)) $To = implode(", ", $To);
+		LOG::INFO("メール送信 ".$To);
 		// 送信
 		return $mailer->send($message);
 

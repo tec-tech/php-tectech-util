@@ -2,6 +2,8 @@
 class LOG{
 	public static $logDir = null;
 	public static $log_file_save_day = -1;
+	public static $traceDepthDefault = 1;
+	public static $traceDepth = 1;
 
 	//=========================
 	// DEBUG
@@ -11,6 +13,8 @@ class LOG{
 			$val = $info = print_r($arg, TRUE);
 			self::write(self::format("[DEBUG]", $val));
 		}
+		// トレース深度をデフォルトに戻す
+		self::$traceDepth = self::$traceDepthDefault;
 	}
 
 	//=========================
@@ -21,6 +25,8 @@ class LOG{
 			$val = $info = print_r($arg, TRUE);
 			self::write(self::format("[INFO]", $val));
 		}
+		// トレース深度をデフォルトに戻す
+		self::$traceDepth = self::$traceDepthDefault;
 	}
 
 	//=========================
@@ -31,13 +37,15 @@ class LOG{
 			$val = $info = print_r($arg, TRUE);
 			self::write(self::format("[ERROR]", $val), true);
 		}
+		// トレース深度をデフォルトに戻す
+		self::$traceDepth = self::$traceDepthDefault;
 	}
 
 	//=========================
 	// ログファイル書き込み
 	//=========================
 	private static function write($mess, $error=false){
-		if(self::$logDir === null) return;
+		if(self::$logDir === null || !file_exists(self::$logDir)) return;
 		self::DelOldFile(self::$logDir, self::$log_file_save_day);
 		
 		$LOG_DIR = self::$logDir;
@@ -56,29 +64,10 @@ class LOG{
 		$log_file .= "]LOG";
 		
 		if($error) $log_file .= "_error";
-		$log_file .= ".txt";
-		if(file_exists($log_file)){   
-			//ファイルが存在するならばデータファイルを追記モードでオープン
-			$fp = @fopen($log_file, "a");
-		}else{
-			//ファイルがなかった場合、ファイルを作る。
-			$fp = fopen($log_file, "w");
-			//ファイル権限を777に変更
-			chmod($log_file,0777);
-		}
-		if($fp){
-			//ファイルロック
-			flock($fp, LOCK_EX);
-			
-			//書き込み
-			fputs($fp,"$log_time $mess \n");
-			
-			//ファイルロック解除
-			flock($fp, LOCK_UN);
-			
-			//ファイルクローズ
-			fclose($fp);
-		}
+		$log_file .= ".log";
+
+		file_put_contents($log_file, $log_time." ".$mess."\n", FILE_APPEND);
+
 		return;
 	}
 	
@@ -114,20 +103,6 @@ class LOG{
 	}
 	
 	//=========================
-	//=========================
-	private static function logTrace($depth=0){
-		//  例外オブジェクトを生成。
-		$e = new Exception;
-		//  トレース配列を取得。
-		$arys = $e->getTrace();
-		//  一つ目はこのtrace()を呼び出したファイル名と行番号なので削除する。
-		array_shift($arys);
-		for($i = 0; $i < $depth; $i ++){
-			array_shift($arys);
-		}
-		return $arys;
-	}
-	//=========================
 	// 配列の中をStringで返す
 	//=========================
 	private static function getDumpString($arr){
@@ -139,14 +114,28 @@ class LOG{
 		}
 		return $arr;
 	}
+	//=========================
+	//=========================
+	private static function logTrace($depth=1){
+		//  例外オブジェクトを生成。
+		$e = new Exception;
+		//  トレース配列を取得。
+		$arys = $e->getTrace();
+		//  一つ目はこのtrace()を呼び出したファイル名と行番号なので削除する。
+		array_shift($arys);
+		for($i = 0; $i < $depth; $i ++){
+			array_shift($arys);
+		}
+		return $arys;
+	}
 	
 	
 	//=========================
 	// ログメッセージをフォーマット
 	//=========================
-	private static function format($prefix, $mess, $depth=0){
+	private static function format($prefix, $mess){
 		$mess = self::getDumpString($mess);
-		$arys = self::logTrace($depth);
+		$arys = self::logTrace(self::$traceDepth);
 		$log_mess = $prefix . " : ".$arys[0]["file"] . " (". $arys[0]["line"] .") ".$mess;
 		return $log_mess;
 	}
