@@ -25,7 +25,7 @@ class Util{
 	// SQL文LIKE文字列用
 	// 第1引数
 	//===========================================
-	public static function SqlLike($str){
+	public static function SqlLike($str, $mode=0){
 		if(isset($str) && is_string($str)){
 			$str = preg_replace('/\\\/', '\\\\\\', $str);	//「\」エスケープ
 			$str = preg_replace('/%/', '\%', $str);			//「%」エスケープ
@@ -34,7 +34,12 @@ class Util{
 		}else{
 			$str = '';
 		}
-		return $str;
+		if($mode == 1){
+			return "'%".$str."'";
+		}else if($mode == 2){
+			return "'".$str."%'";
+		}
+		return "'%".$str."%'";
 	}
 	
 	//===========================================
