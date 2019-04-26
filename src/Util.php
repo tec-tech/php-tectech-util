@@ -104,6 +104,22 @@ class Util{
 	}
 	
 	//==================================================
+	// 古いファイルを削除
+	//==================================================
+	public static function rmOldFile($dir, $hour){
+		$expire = strtotime($hour." hours ago");
+		$list = scandir($dir);
+		foreach($list as $value){
+			$file = $dir."/".$value;
+			if(!is_file($file)) continue;
+			if(preg_match("/^\.gitkeep/",$value)) continue;
+			if(filemtime($file) < $expire){
+				unlink($file);
+			}
+		}
+	}
+	
+	//==================================================
 	// NULLまたは空文字チェック
 	//==================================================
 	public static function IsNullOrEmpty(&$val){
