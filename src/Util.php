@@ -114,4 +114,11 @@ class Util{
 		return false;
 	}
 
+	//==================================================
+	// ランダム文字列生成
+	//==================================================
+	public static function random($length = 8){
+		return array_reduce(range(1, $length), function($p){ return $p.str_shuffle('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')[0]; });
+	}
+	
 }
