@@ -30,7 +30,7 @@ class DB{
 				));
 			
 		}catch (PDOException $e){
-			self::LogWrite("DB 接続失敗：\n".$e->getMessage()."\nSQL:".$sql, true);
+			self::LogWrite("DB 接続失敗：\n".$e->getMessage()."\n", true);
 			throw new Exception($e->getMessage());
 		}
 		// self::LogWrite("DB接続成功");
