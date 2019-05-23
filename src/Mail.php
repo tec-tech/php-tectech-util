@@ -26,16 +26,14 @@ class Mail{
 				}
 			}
 		}
-		Log::Info($GLOBALS['@APP_CONF']['from_mail']);
 		$from = array($GLOBALS['@APP_CONF']['from_mail'][0] => $GLOBALS['@APP_CONF']['from_mail'][1]);
 
-		$transport = \Swift_SmtpTransport::newInstance('localhost', 25);
-
-		$mailer = Swift_Mailer::newInstance($transport);
-
+		$transport = new Swift_SmtpTransport('localhost', 25);
+		$mailer = new Swift_Mailer($transport);
 		// メールの作成
 		$body = str_replace(array("\r\n","\r","\n"), "\r", $body);
-		$message = Swift_Message::newInstance()
+		$message = new Swift_Message();
+		$message
 			->setMaxLineLength(0)	// テキストメールで改行させない
 			->setSubject($subject)
 			->setFrom($from)
@@ -57,20 +55,11 @@ class Mail{
 				$message->attach($attachment);
 			}
 		}
-		// 送信
-		$logMess  = "メール送信\n";
-		$logMess .= "-----------------------------------\n";
-		$logMess .= "TO:".implode(",", $to)."\n";
-		$logMess .= "BCC:".implode(",", $bcc)."\n";
-		$logMess .= "SUBJECT:".$subject."\n";
-		$logMess .= "BODY:".$body."\n";
-		$logMess .= "-----------------------------------\n";
-		Log::Info($logMess);
 		return $mailer->send($message);
 	}
 
 	//===========================================
-	// メール送信
+	// メール送信（HTML）
 	//===========================================
 	public static function sedHtmlMail($to, $subject, $body, $bcc=null, $opt=null){
 		if(!is_array($to)){
@@ -92,12 +81,11 @@ class Mail{
 		}
 		$from = array($GLOBALS['@APP_CONF']['from_mail'][0] => $GLOBALS['@APP_CONF']['from_mail'][1]);
 		
-		$transport = \Swift_SmtpTransport::newInstance('localhost', 25);
-		
-		$mailer = Swift_Mailer::newInstance($transport);
-		
+		$transport = new Swift_SmtpTransport('localhost', 25);
+		$mailer = new Swift_Mailer($transport);
 		// メールの作成
-		$message = Swift_Message::newInstance()
+		$message = new Swift_Message();
+		$message
 			->setMaxLineLength(0)	// テキストメールで改行させない
 			->setSubject($subject)
 			->setFrom($from)
@@ -105,20 +93,6 @@ class Mail{
 			->setBcc($bcc)
 			->setBody($body, 'text/html')
 			;
-		
-		// 送信
-		if(!$opt || !isset($opt['nolog']) || $opt['nolog']){
-			$logMess  = "メール送信\n";
-			$logMess .= "-----------------------------------\n";
-			// $logMess .= "FROM:".$from."\n";
-			$logMess .= "FROM:".implode(",", $from)."\n";
-			$logMess .= "TO:".implode(",", $to)."\n";
-			$logMess .= "BCC:".implode(",", $bcc)."\n";
-			$logMess .= "SUBJECT:".$subject."\n";
-			$logMess .= "BODY:".$body."\n";
-			$logMess .= "-----------------------------------\n";
-			Log::Info($logMess);
-		}
 		return $mailer->send($message);
 	}
 	
