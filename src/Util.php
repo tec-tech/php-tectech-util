@@ -72,6 +72,7 @@ class Util{
 			$str = trim($str);
 			return preg_replace('/^[ 　]*(.*?)[ 　]*$/u', '$1', $str);
 		}
+		return $str;
 	}
 	//==================================================
 	// 配列のtrim
