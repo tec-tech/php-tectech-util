@@ -137,4 +137,82 @@ class Util{
 		return array_reduce(range(1, $length), function($p){ return $p.str_shuffle('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')[0]; });
 	}
 	
+	//====================================
+	// 日付判定
+	// YYYY/MM/DDとかYYYY-MM-DDとかYYYY月MM月DD日
+	// 失敗時NULLを返す
+	// $calcStr "-1 day", "-1 month", "-1 year", "-1 week"
+	// 戻り値：
+	// 			date:			yyyy-m-d
+	//			date_w_num:		曜日の数値
+	//			date_w_jp:		yyyy月mm月dd日
+	//			date_md_w_jp:	yyyy月mm月dd日(ww)
+	//====================================
+	public static function getDate($str, $calcStr=null){
+		// echo('対象文字列->'.$str);
+		$str = self::Trim($str);
+		if($str == ""){
+			return null;
+		}
+		$Y = "";
+		$M = "";
+		$D = "";
+		$C = 0;
+		$notNumFlg = true;
+		$preg_str = "/^[0-9]+$/";
+		for($i = 0; $i < mb_strlen($str); $i ++){
+			$str1 = mb_substr($str, $i , 1);
+			// 数字の時
+			if(preg_match($preg_str, $str1)){
+				$notNumFlg = false;
+				if($C == 0){
+					$Y .= $str1;
+				}else if($C == 1){
+					$M .= $str1;
+				}else if($C == 2){
+					$D .= $str1;
+				}
+			}else{
+				if(!$notNumFlg){
+					$notNumFlg = true;
+					$C ++;
+				}
+			}
+			if($C > 2){
+				$C = 2;
+				break;
+			}
+		}
+		if($C == 2 && $Y!="" && $M!="" && $D!=""){
+			if($calcStr){
+				$strDay = $Y."-".$M."-".$D." ".$calcStr;
+				$strTime = strtotime($strDay);
+				
+				$Y = date('Y', $strTime);
+				$M = date('m', $strTime);
+				$D = date('d', $strTime);
+			}
+			if(checkdate($M, $D, $Y)){
+				$weekday_jp = array( "日", "月", "火", "水", "木", "金", "土" );
+				
+				$retVal["date"] = $Y.'-'.$M.'-'.$D;
+				$retVal["Y"] = $Y;
+				$retVal["M"] = $M;
+				$retVal["D"] = $D;
+				$retVal["MM"] = str_pad($M, 2, 0, STR_PAD_LEFT);
+				$retVal["DD"] = str_pad($D, 2, 0, STR_PAD_LEFT);
+				
+				$datetime = new DateTime($retVal["date"]);
+				$w = (int)$datetime->format('w');
+				$retVal["W"] = $w;
+				$retVal["date_w_jp"] = $Y.'年'.$M.'月'.$D.'日'.'('.$weekday_jp[$w].')';
+				$retVal["date_md_w_jp"] = $M.'月'.$D.'日'.'('.$weekday_jp[$w].')';
+				return $retVal;
+			}else{
+				// Log::Warn('日付作成に失敗しました。$str:'.$str.' $calcStr:'.$calcStr, 1);
+			}
+		}
+		
+		return null;
+	}
 }
