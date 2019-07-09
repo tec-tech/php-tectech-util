@@ -58,6 +58,20 @@ class Util{
 	}
 	
 	//===========================================
+	// スペース区切りキーワードを配列に格納
+	//===========================================
+	public static function getKeywordArray($str){
+		$str = preg_replace('/　/', ' ', $str);	// 全角スペースを半角スペースに変換
+		$array = explode(' ', $str);
+		$array = self::ArrTrim($array);
+		$retVal = [];
+		foreach($array as $val){
+			if($val != "") $retVal[] = $val;
+		}
+		return $retVal;
+	}
+	
+	//===========================================
 	// カンマ追加
 	//===========================================
 	public static function AddComma($str){
