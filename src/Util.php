@@ -230,4 +230,32 @@ class Util{
 		
 		return null;
 	}
+	// ===================================
+	// ファイルを出力
+	// ===================================
+	public static function output($path){
+		if(file_exists($path)){
+			header('Content-Type: '.mime_content_type($path));
+			header('Content-Disposition: attachment; filename="'.basename($path).'"');
+			header('Content-Length: ' . filesize($path));
+
+			while (ob_get_level() > 0){
+				ob_end_clean();
+			}
+			ob_start();
+   
+			// ファイル出力
+			if($file = fopen($path, 'rb')){
+				while(!feof($file) and (connection_status() == 0)) {
+					echo fread($file, '4096'); //指定したバイト数ずつ出力
+					ob_flush();
+				}
+				ob_flush();
+				fclose($file);
+			}
+			ob_end_clean();
+		}else{
+			echo "404";
+		}
+	}
 }
