@@ -22,7 +22,7 @@ class DB{
 	public static function connect(){
 		try{
 			self::LogWrite("DB接続開始 DataBase Name:[".self::$connInfo["dbname"]."]");
-			$dsn = 'mysql:host='.self::$connInfo["host"].';dbname='.self::$connInfo["dbname"].';port='.self::$connInfo["port"].';charset=utf8;';
+			$dsn = 'mysql:host='.self::$connInfo["host"].';dbname='.self::$connInfo["dbname"].';port='.self::$connInfo["port"].';charset='.self::$connInfo["charset"].';';
 			self::$_con = new PDO($dsn, self::$connInfo["user"], self::$connInfo["password"], 
 				array(
 					PDO::ATTR_EMULATE_PREPARES => false,
