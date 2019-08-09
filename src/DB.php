@@ -47,6 +47,9 @@ class DB{
 			// self::LogWrite("作用した行数：".$stmt."行");
 			return $stmt;
 		}catch (PDOException $e){
+			if(getenv('DERBUG')=='true'){
+				echo "SQL実行失敗：\n".$e->getMessage()."\nSQL:".$sql;
+			}
 			self::LogWrite("SQL実行失敗：\n".$e->getMessage()."\nSQL:".$sql, true);
 			throw new Exception($e->getMessage());
 		}
