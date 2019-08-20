@@ -59,9 +59,9 @@ class LOG{
 		
 		$log_time = date("[y/m/d H:i:s "). getenv("REMOTE_ADDR") . "]";
 		$log_file = $LOG_DIR;
-		$log_file .= "/".date("[y.m.d");
+		$log_file .= "/".date("Ymd");
 		
-		$log_file .= "]LOG";
+		$log_file .= "";
 		
 		if($error) $log_file .= "_error";
 		$log_file .= ".log";
