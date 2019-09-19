@@ -124,14 +124,21 @@ class Util{
 	public static function rmOldFile($dir, $hour){
 		$expire = strtotime($hour." hours ago");
 		$list = scandir($dir);
+		$deleteList = [];
 		foreach($list as $value){
 			$file = $dir."/".$value;
-			if(!is_file($file)) continue;
-			if(preg_match("/^\.gitkeep/",$value)) continue;
+			if($value == "." || $value == "..") continue;
+			if(preg_match("/^\.git(keep|ignore)/",$value)) continue;
 			if(filemtime($file) < $expire){
-				unlink($file);
+				if(is_file($file)){
+					unlink($file);
+				}else{
+					self::rmdir($file);
+				}
+				$deleteList[] = $file;
 			}
 		}
+		return $deleteList;
 	}
 	
 	//==================================================
