@@ -83,7 +83,7 @@ class LOG{
 		
 		$targetdir = opendir($dirPath);	//対象とするディレクトリ情報をセットして開く
 		while (false !== ($targetfile = readdir($targetdir))){
-			if($targetfile != "." && $targetfile != ".."){
+			if(!preg_match("/^\./",$targetfile)){
 				// ディレクトリの場合は再帰処理実行
 				if(is_dir($dirPath.'/'.$targetfile)){
 					self::DelOldFile($dirPath.'/'.$targetfile, $day);
