@@ -245,7 +245,7 @@ class Util{
 	public static function convertDate2Array($inputDate){
 		$result = [];
 		$rep = preg_replace("/[^0-9]/",",",$inputDate);
-		$arr = explode(',', $rep);
+		$arr = explode(',', $rep, 6);
 		foreach($arr as $val){
 			if($val) $result[] = $val;
 		}
