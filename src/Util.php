@@ -236,7 +236,44 @@ class Util{
 		}
 		
 		return null;
+    }
+
+	//========================================
+    // 日付(例：YYYY-MM-DD HH:MM:SS)を配列に変換
+    // * 数値以外の文字列で分割
+	//========================================
+	public static function convertDate2Array($inputDate){
+		$result = [];
+		$rep = preg_replace("/[^0-9]/",",",$inputDate);
+		$arr = explode(',', $rep);
+		foreach($arr as $val){
+			if($val) $result[] = $val;
+		}
+		return $result;
+    }
+    
+	//========================================
+	// 日付配列を"YYYY-MM-DD HH:MM:SS"に変換
+	//========================================
+	public static function convertArray2Date($dateList){
+		$result = null;
+		if(count($dateList) >= 5){
+			$result .= $dateList[0];
+			$result .= '-';
+			$result .= $dateList[1];
+			$result .= '-';
+			$result .= $dateList[2];
+			$result .= ' ';
+			$result .= $dateList[3];
+			$result .= ':';
+			$result .= $dateList[4];
+        }
+        if(count($dateList) ==  6){
+            $result .= ':'.$dateList[5];
+        }
+		return $result;
 	}
+
 	// ===================================
 	// ファイルを出力
 	// ===================================
