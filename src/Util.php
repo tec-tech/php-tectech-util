@@ -46,6 +46,7 @@ class Util{
 	// SQL文数値用
 	//===========================================
 	public static function SqlNum($num, $nullNum=null){
+		$num = str_replace(',', '', $num);
 		if(isset($num) && is_numeric($num)){
 			return $num;
 		}else{
